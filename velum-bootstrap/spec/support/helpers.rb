@@ -54,10 +54,20 @@ module Helpers
     end
 
     fill_in "settings_dashboard", with: environment["dashboardHost"] || default_ip_address
+
+    # check Tiller checkbox
     if ENV.fetch("ENABLE_TILLER", false) == "true"
       check "settings[tiller]"
     else
       uncheck "settings[tiller]"
+    end
+
+    # choose cri-o engine by pressing button
+    if ENV.fetch("CHOOSE_CRIO", false) == "true"
+      # using the "chose" function fails with a MouseEventFailed overlap error
+      page.find('#settings_container_runtime_crio').trigger(:click)
+    else
+      page.find('#settings_container_runtime_docker').trigger(:click)
     end
     click_on "Next"
     puts "<<< Velum set up"
